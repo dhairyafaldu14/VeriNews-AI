@@ -1,144 +1,208 @@
 # VeriNews AI — Intelligent News Classification System
 
-VeriNews AI is a machine-learning-based news text classification project. It predicts whether a submitted news headline and article body are **Real News** or **Fake News** using TF-IDF features and a trained Linear Support Vector Machine (Linear SVM).
+An AI-powered news classification application that uses Natural Language Processing (NLP) and Machine Learning to classify news articles as **Real News** or **Fake News**.
 
-> **Important:** VeriNews AI is a text classifier, not an independent fact-checking system. It learns patterns from the WELFake dataset. It does not verify claims against reliable sources or establish whether an event actually happened.
+## 🚀 Live Demo
 
-## Project objectives
+**Try VeriNews AI:** https://verinews-ai.streamlit.app/
 
-- Clean and prepare a labelled news dataset.
-- Convert news text into numerical features using TF-IDF.
-- Train and compare multiple machine-learning classifiers.
-- Evaluate the selected model on held-out data.
-- Build a Streamlit interface to demonstrate predictions and model explanations.
+## 📌 Project Overview
 
-## Dataset
+VeriNews AI is a machine learning project developed as part of the **AI & ML Internship at Elevate Labs**.
 
-This project uses the **WELFake dataset** (`WELFake_Dataset.csv`), which contains news articles labelled as real or fake.
+The system analyzes the textual content of news articles and predicts whether they belong to the Real News or Fake News category.
 
-The notebook's workflow includes:
-- Inspecting and handling missing or empty values.
-- Removing duplicate combined article content.
-- Combining headline and article body for model input.
-- Splitting data into training and testing sets while grouping identical article bodies to reduce train/test overlap.
-- Fitting TF-IDF on training text only and transforming the test text separately.
+It uses TF-IDF for text feature extraction and a Linear Support Vector Machine (SVM) classifier for prediction.
 
-The final deduplicated dataset used in the recorded workflow contained **63,108 rows**.
+The application also displays the SVM decision score and important influential words to help users understand the model's prediction.
 
-## Methodology
+## ✨ Features
 
-### Text preprocessing and feature extraction
+- Real-time news classification.
+- Real News and Fake News prediction.
+- TF-IDF-based text feature extraction.
+- Linear SVM classification model.
+- SVM decision score visualization.
+- Important influential words contributing to predictions.
+- Interactive web interface built with Streamlit.
 
-The notebook combines the headline and article body into one text input. It uses `TfidfVectorizer` with:
+## 🛠️ Technologies Used
 
-- `max_features=50000`
-- `ngram_range=(1, 2)` — unigrams and bigrams
-- `stop_words='english'`
+- **Python** – Programming language
+- **Pandas** – Data manipulation
+- **NumPy** – Numerical operations
+- **Scikit-learn** – Machine learning and NLP
+- **TF-IDF Vectorizer** – Text feature extraction
+- **Linear SVM** – News classification
+- **Joblib** – Model serialization
+- **Streamlit** – Web application development
+- **Matplotlib** – Data visualization
+- **Jupyter Notebook / Google Colab** – Model development
 
-The vectorizer is fitted on the training data only to avoid fitting vocabulary on the test set.
+## 📂 Project Structure
 
-### Machine-learning models
+```text
+VeriNews-AI/
+│
+├── app.py
+├── VeriNews_AI.ipynb
+├── verinews_svm_model.pkl
+├── verinews_tfidf.pkl
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
 
-The notebook compares:
+## 📊 Dataset
 
-1. Logistic Regression
-2. Multinomial Naive Bayes
-3. Linear Support Vector Machine (Linear SVM)
+The project uses the **WELFake Dataset**, which contains real and fake news articles.
 
-The Linear SVM was selected based on the recorded evaluation results.
+Dataset information:
 
-## Model evaluation
+- Original dataset: 72,134 records
+- Records after preprocessing and duplicate removal: 63,108
+- Real News: 34,790
+- Fake News: 28,318
 
-Recorded results for the selected Linear SVM on the held-out WELFake test split:
+The dataset was cleaned and preprocessed before model training.
+
+The original dataset is not included in this GitHub repository because of its large file size.
+
+## ⚙️ Data Preprocessing
+
+The following preprocessing steps were performed:
+
+1. Removed unnecessary columns.
+2. Handled missing values.
+3. Combined article titles and text.
+4. Removed duplicate articles.
+5. Checked class distribution.
+6. Split the dataset into training and testing sets.
+7. Applied TF-IDF vectorization.
+
+To prevent data leakage, articles with overlapping text bodies were kept within the same data split.
+
+## 🤖 Model Development
+
+Three machine learning algorithms were evaluated:
+
+| Model | Test Accuracy |
+|---|---:|
+| Logistic Regression | 94.83% |
+| Multinomial Naive Bayes | 87.79% |
+| Linear Support Vector Machine | 96.07% |
+
+**Selected Model: Linear Support Vector Machine (SVM)**
+
+The Linear SVM model achieved the highest test accuracy and was selected for the final application.
+
+### TF-IDF Configuration
+
+- Maximum features: 50,000
+- N-gram range: (1, 2)
+- Stop words: English
+
+## 📈 Model Performance
+
+The final Linear SVM model achieved the following results on the held-out test dataset:
 
 | Metric | Result |
 |---|---:|
 | Accuracy | 96.07% |
-| Macro F1-score | 0.96 |
+| Macro F1-Score | 0.96 |
 | ROC-AUC | 0.9926 |
 | Average Precision | 0.9915 |
 
-These are results from the project's held-out dataset split. They are not a guarantee of performance on current news, other datasets, or real-world claims. The external evaluation conducted during development was small and exploratory, so it should not be presented as a representative benchmark.
-
-## Streamlit application
-
-The Streamlit app (`app.py`) accepts:
-- A news headline
-- The news article body
-
-It then displays:
-- Predicted category: Real News or Fake News
-- Linear SVM decision score
-- Up to five influential TF-IDF features contributing toward the predicted class
-- A disclaimer about the model's limitations
-
-### Understanding the SVM decision score
-
-The decision score is **not a probability**. A positive score indicates the Fake News class, while a negative score indicates the Real News class. Its magnitude represents distance from the decision boundary, not a probability or percentage confidence.
-
-The influential words are model feature contributions. They are not evidence that an article is true or false.
-
-## Project structure
-
-The complete project folder should contain:
+### Confusion Matrix
 
 ```text
-VeriNews-AI/
-├── VeriNews_AI.ipynb
-├── WELFake_Dataset.csv
-├── app.py
-├── verinews_tfidf.pkl
-├── verinews_svm_model.pkl
-├── requirements.txt
-└── README.md
+[[6758, 227],
+ [ 269, 5361]]
 ```
 
-The CSV dataset is needed to reproduce the notebook's training and preprocessing workflow. The deployed Streamlit app uses the two saved `.pkl` files and does not need to load the CSV.
+Class labels:
+- 0 = Real News
+- 1 = Fake News
 
-## Run the Streamlit app locally
+The model was evaluated using a grouped train-test split to reduce the risk of duplicate article leakage.
 
-1. Install Python.
-2. Download or clone this repository.
-3. Open a terminal in the project folder.
-4. Install the dependencies:
+## 🧠 Prediction Explanation
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+VeriNews AI provides additional information alongside its predictions.
 
-5. Run the app:
+### SVM Decision Score
 
-   ```bash
-   streamlit run app.py
-   ```
+- Positive score: Fake News
+- Negative score: Real News
+- Score close to zero: Prediction is closer to the decision boundary.
 
-6. Open the local address printed by Streamlit in your browser.
+**Important:** The SVM decision score is not a probability or confidence percentage.
 
-Keep `app.py`, `verinews_tfidf.pkl`, and `verinews_svm_model.pkl` in the same directory. The app loads the model files using these filenames.
+### Important Influential Words
 
-## Deployment
+The application identifies words and phrases that contribute toward the predicted classification.
 
-The app can be deployed through Streamlit Community Cloud by connecting the GitHub repository and selecting `app.py` as the main file. The repository must include `app.py`, both model files, and `requirements.txt`.
+These features explain the model's learned associations, but they do not independently establish whether a news article is true or false.
 
-The dataset and notebook can also be included in the repository for project transparency and reproducibility, subject to GitHub's file-size limits.
+## 💻 Run Locally
 
-## Technologies and libraries
+Follow these steps to run VeriNews AI on your computer.
 
-- Python
-- Pandas
-- Scikit-learn
-- Joblib
-- Matplotlib
-- Streamlit
+### 1. Clone the Repository
 
-The notebook was developed in Google Colab. The requirements file includes the libraries used by the notebook and app. Google Colab-specific utilities are provided by the Colab environment and are not required to run the Streamlit app locally.
+```bash
+git clone https://github.com/dhairyafaldu14/VeriNews-AI.git
+```
 
-## Limitations
+### 2. Navigate to the Project Directory
 
-- The model learns statistical text patterns from its training dataset; it does not independently verify facts.
-- Predictions can be affected by topic, writing style, dataset bias, and changes in news language over time.
-- A high held-out test score does not guarantee equivalent real-world performance.
-- The SVM decision score is not a probability.
-- Feature contributions explain which learned model features influenced a prediction; they do not establish factual evidence.
+```bash
+cd VeriNews-AI
+```
 
-For important news, verify claims using multiple reliable and independent sources.
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Streamlit Application
+
+```bash
+streamlit run app.py
+```
+
+The application will open in your default web browser.
+
+## 📦 Model Files
+
+The trained machine learning components are stored separately:
+
+- `verinews_svm_model.pkl` – Trained Linear SVM classifier.
+- `verinews_tfidf.pkl` – Fitted TF-IDF vectorizer.
+
+These files are loaded by the Streamlit application to generate predictions.
+
+## ⚠️ Limitations
+
+- The model relies on patterns learned from its training dataset.
+- It may produce incorrect predictions.
+- It can be affected by misleading wording, unfamiliar topics, and changes in news language.
+- Important influential words do not prove the truth or falsity of an article.
+- It does not independently verify claims against trusted news sources.
+
+**VeriNews AI is a text classification system, not a fact-checking system. Always verify important news through reliable sources.**
+
+## 🎯 Project Objective
+
+The objective of this project is to demonstrate how Natural Language Processing and Machine Learning can be used to classify news articles and provide interpretable prediction information through an interactive web application.
+
+## 👨‍💻 Internship Information
+
+**Program:** AI & ML Internship  
+**Organization:** Elevate Labs  
+**Project:** Task 6 – VeriNews AI: Intelligent News Classification System
+
+---
+
+**Developed as part of the Elevate Labs AI & ML Internship.**
